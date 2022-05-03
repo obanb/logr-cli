@@ -16,6 +16,7 @@ import (
 )
 
 type ServerStatus int
+
 const (
 	Running ServerStatus = iota
 	Idle
@@ -33,15 +34,15 @@ func (s ServerStatus) String() string {
 }
 
 type HttpServer struct {
-	port string
+	port            string
 	healthCheckPath string
-	quit chan os.Signal
+	quit            chan os.Signal
 }
 
 type Broadcast struct {
-	id string `json:"id"`
-	body map[string]interface{} `json:"body"`
-	headers http.Header `json:"headers"`
+	id      string                 `json:"id"`
+	body    map[string]interface{} `json:"body"`
+	headers http.Header            `json:"headers"`
 }
 
 func CORS() gin.HandlerFunc {
@@ -72,7 +73,6 @@ func (s *HttpServer) Start() error {
 	}
 
 	handler := newHandler()
-
 
 	handler.POST("/imitate", func(c *gin.Context) {
 
@@ -110,7 +110,7 @@ func (s *HttpServer) Start() error {
 	})
 
 	httpServer := &http.Server{
-		Addr:          fmt.Sprintf(":%s", s.port),
+		Addr:         fmt.Sprintf(":%s", s.port),
 		Handler:      handler,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -135,11 +135,11 @@ func (s *HttpServer) Start() error {
 	return nil
 }
 
-func main(){
+func main() {
 	server := HttpServer{
-		port: "8080",
+		port:            "8080",
 		healthCheckPath: "/health",
-		quit: make(chan os.Signal, 1),
+		quit:            make(chan os.Signal, 1),
 	}
 	fmt.Println(server)
 	var rootCmd = &cobra.Command{
@@ -147,7 +147,7 @@ func main(){
 		Short: "Logr cli application written in Go",
 		Long:  `Logr cli application written in Go.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := server.Start(); err != nil{
+			if err := server.Start(); err != nil {
 				return err
 			}
 			return nil

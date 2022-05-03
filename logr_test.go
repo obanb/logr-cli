@@ -14,11 +14,11 @@ import (
 )
 
 type TestCase struct {
-	name     string
-	address   map[string]string
-	codes      []string
-	count     int
-	opts map[string]interface{}
+	name    string
+	address map[string]string
+	codes   []string
+	count   int
+	opts    map[string]interface{}
 }
 
 var testCase = TestCase{
@@ -48,35 +48,35 @@ var testCase = TestCase{
 	},
 }
 
-func generate(data map[string]interface{}) map[string]interface{}  {
+func generate(data map[string]interface{}) map[string]interface{} {
 
-		for key, v := range data {
-			if assert, ok := v.(map[string]interface{}); ok {
-				generate(assert)
-			} else {
-				if av, ok := v.(string); ok {
-					data[key] = imitateString(av)
-				}
-				if av, ok := v.(float64); ok {
-					data[key] = imitateNumber(av)
-				}
-				if assert, ok := v.([]interface{}); ok {
-					rv := reflect.ValueOf(assert)
-					ret := make([]interface{}, rv.Len())
-					for i, v := range assert {
-						if av, ok := v.(string); ok {
-							ret[i] = imitateString(av)
-						}
-						if av, ok := v.(float64); ok {
-							ret[i] = imitateNumber(av)
-						}
-						if assert, ok := v.(map[string]interface{}); ok {
-							ret[i] = generate(assert)
-						}
-					}
-					data[key] = ret
-				}
+	for key, v := range data {
+		if assert, ok := v.(map[string]interface{}); ok {
+			generate(assert)
+		} else {
+			if av, ok := v.(string); ok {
+				data[key] = imitateString(av)
 			}
+			if av, ok := v.(float64); ok {
+				data[key] = imitateNumber(av)
+			}
+			if assert, ok := v.([]interface{}); ok {
+				rv := reflect.ValueOf(assert)
+				ret := make([]interface{}, rv.Len())
+				for i, v := range assert {
+					if av, ok := v.(string); ok {
+						ret[i] = imitateString(av)
+					}
+					if av, ok := v.(float64); ok {
+						ret[i] = imitateNumber(av)
+					}
+					if assert, ok := v.(map[string]interface{}); ok {
+						ret[i] = generate(assert)
+					}
+				}
+				data[key] = ret
+			}
+		}
 	}
 
 	return data
@@ -93,13 +93,13 @@ func imitateString(s string) string {
 
 	b := make([]string, len(s))
 	for i := 0; i < len(s); i++ {
-		fromIndex := s[i:i+1]
+		fromIndex := s[i : i+1]
 		if specialsReg.MatchString(fromIndex) {
 			b[i] = fromIndex
 		} else {
 			if digitStringReg.MatchString(fromIndex) {
-				b[i] = strconv.Itoa(rand.Intn(10 - 1) + 1)
-			}else{
+				b[i] = strconv.Itoa(rand.Intn(10-1) + 1)
+			} else {
 				if vovelsReg.MatchString(fromIndex) {
 					b[i] = string(vovels[rand.Intn(len(vovels)-1)])
 				} else {
@@ -115,7 +115,6 @@ func imitateString(s string) string {
 	return generated
 }
 
-
 func imitateNumber(n float64) float64 {
 	simple := uint64(n)
 
@@ -128,14 +127,13 @@ func imitateNumber(n float64) float64 {
 	s := ""
 
 	for i := 0; i < count; i++ {
-		s += strconv.Itoa(rand.Intn(10 - 1) + 1)
+		s += strconv.Itoa(rand.Intn(10-1) + 1)
 	}
 
 	floatNum, _ := strconv.ParseFloat(s, 64)
 
 	return floatNum
 }
-
 
 func CreateRequest() *http.Request {
 	var pes = map[string]interface{}{
@@ -154,7 +152,7 @@ func CreateRequest() *http.Request {
 			"ka[usta",
 		},
 		"string": "string",
-		"inte": 665,
+		"inte":   665,
 	}
 	b, _ := json.Marshal(pes)
 	reader := bytes.NewReader(b)
@@ -165,7 +163,6 @@ func CreateRequest() *http.Request {
 	var body map[string]interface{}
 
 	json.NewDecoder(req.Body).Decode(&body)
-
 
 	generate(body)
 
