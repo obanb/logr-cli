@@ -1,0 +1,8 @@
+{
+ "client_id": "9fb8a50cb1a7822265196335a3173911",
+ "client_secret": "87fb6345f77c86aea10eab252fb4aa97",
+ "code": "f987214e55e5",
+ "grant_type": "authorization_code",
+ "redirect_uri": "http://localhost:8080/oauth/callback",
+ "scope": "SPP"
+}
